@@ -80,15 +80,16 @@ const GM_GATE=[
   "Gate open. Rest of the day is yours.",
 ];
 
+/** Saturated dark fills so wheel labels (near-white) meet stronger contrast on all segments. */
 const EMOTION_CORES=[
-  {id:"joy",label:"Joy",color:"#fbbf24",emoji:"🌟"},
-  {id:"trust",label:"Trust",color:"#4ade80",emoji:"🤝"},
-  {id:"fear",label:"Fear",color:"#a78bfa",emoji:"😰"},
-  {id:"surprise",label:"Surprise",color:"#00e5ff",emoji:"✨"},
-  {id:"sadness",label:"Sadness",color:"#60a5fa",emoji:"💙"},
-  {id:"disgust",label:"Disgust",color:"#f472b6",emoji:"😶"},
-  {id:"anger",label:"Anger",color:"#f87171",emoji:"🔥"},
-  {id:"anticipation",label:"Anticipation",color:"#fb923c",emoji:"🔮"},
+  {id:"joy",label:"Joy",color:"#92400e",emoji:"🌟"},
+  {id:"trust",label:"Trust",color:"#14532d",emoji:"🤝"},
+  {id:"fear",label:"Fear",color:"#5b21b6",emoji:"😰"},
+  {id:"surprise",label:"Surprise",color:"#155e75",emoji:"✨"},
+  {id:"sadness",label:"Sadness",color:"#1e3a8a",emoji:"💙"},
+  {id:"disgust",label:"Disgust",color:"#831843",emoji:"😶"},
+  {id:"anger",label:"Anger",color:"#991b1b",emoji:"🔥"},
+  {id:"anticipation",label:"Anticipation",color:"#9a3412",emoji:"🔮"},
 ];
 
 const EMOTION_VARIANTS={
@@ -417,10 +418,10 @@ export default function App(){
   const unreadCount=messages.filter(m=>!m.read).length;
 
   if(!ready)return(
-    <div ref={rootRef} className={`mission-control-root theme-${theme}`} data-theme={theme} style={{...getThemeCssVars(theme),zoom:BASE_ZOOM*TEXT_STEPS[textStep],minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"var(--mc-font-mono)",color:"var(--mc-accent)",fontSize:16,letterSpacing:3,position:"relative",paddingRight:96}}>
+    <div ref={rootRef} className={`mission-control-root theme-${theme}`} data-theme={theme} style={{...getThemeCssVars(theme),zoom:BASE_ZOOM*TEXT_STEPS[textStep],minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"var(--mc-font-mono)",color:"var(--mc-accent)",fontSize:16,letterSpacing:3,position:"relative"}}>
       <style>{CSS}</style>
       <AppearanceBar theme={theme} setTheme={setTheme} textStep={textStep} setTextStep={setTextStep}/>
-      <div style={{textAlign:"center"}}><div style={{fontSize:38,marginBottom:16}}>🚀</div><div>INITIALIZING...</div></div>
+      <div className="mc-app-shell" style={{textAlign:"center"}}><div style={{fontSize:38,marginBottom:16}}>🚀</div><div>INITIALIZING...</div></div>
     </div>
   );
 
@@ -434,7 +435,7 @@ export default function App(){
       {toast&&<Toast achv={toast}/>}
       {gmMsg&&<GmToast msg={gmMsg}/>}
       <AppearanceBar theme={theme} setTheme={setTheme} textStep={textStep} setTextStep={setTextStep}/>
-      <div style={{position:"relative",zIndex:1,paddingRight:96}}>
+      <div className="mc-app-shell" style={{position:"relative",zIndex:1}}>
         <div className="mc-sticky-head">
           <Header bank={bank} gateOpen={gateOpen} done={done.length} gateMin={gateMin} streak={streak}/>
           <Nav view={view} setView={setView} unread={unreadCount}/>
@@ -616,16 +617,30 @@ const CSS=`
   input,select,textarea{outline:none;}
   button{cursor:pointer;}
 
+  .mc-appearance-sheet{animation:fadeUp 0.25s ease;}
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto;}
     .card.mc-mcard,.cbtn,.hcard,.mc-nav-tab,.mc-aside-btn,.mc-layout-tab,.mc-panel-tile,.mc-sticky-head,.mc-ach-tile,.mc-bank-hit{transition:none!important;}
     .card.mc-mcard:not(.done):not(.skip):hover,.mc-mission-cards-3 .card.mc-mcard:not(.done):not(.skip):hover,.card.mc-mcard.done:hover,.card.mc-mcard.skip:hover,.hcard:hover,.mc-nav-tab:hover,.mc-aside-dock:hover,.mc-layout-tab:hover,.mc-aside-btn:hover,.mc-panel-tile:hover,.mc-ach-tile:hover,.mc-bank-hit:not(:disabled):hover{transform:none!important;filter:none!important;box-shadow:none!important;}
     .mc-aside-dock:hover{transform:translateY(-50%)!important;}
+    .mc-appearance-sheet{animation:none!important;}
   }
 
   .mc-mission-cards-3{display:grid;gap:10px;grid-template-columns:repeat(3,minmax(0,1fr));}
   @media (max-width:600px){.mc-mission-cards-3{grid-template-columns:1fr;}}
   @media (min-width:601px) and (max-width:900px){.mc-mission-cards-3{grid-template-columns:repeat(2,minmax(0,1fr));}}
+
+  .mc-app-shell{box-sizing:border-box;padding-right:max(96px,calc(84px + env(safe-area-inset-right, 0px)));padding-left:max(0px,env(safe-area-inset-left,0px));}
+  @media (max-width:720px){
+    .mc-app-shell{padding-right:max(12px,env(safe-area-inset-right,0px))!important;padding-left:max(12px,env(safe-area-inset-left,0px))!important;}
+    .mc-aside-dock{display:none!important;}
+    .mc-header-inner{flex-direction:column!important;align-items:stretch!important;gap:12px!important;}
+    .mc-header-bank{text-align:left!important;}
+    .mc-header-title{font-size:15px!important;letter-spacing:2px!important;}
+    .mc-nav-bar{flex-wrap:wrap!important;gap:6px 4px!important;margin-bottom:12px!important;padding:0 10px!important;}
+    .mc-nav-bar .mc-nav-tab{flex:1 1 42%!important;min-width:calc(50% - 4px)!important;font-size:8px!important;letter-spacing:0.55px!important;padding:10px 2px!important;line-height:1.15!important;}
+    .mission-control-root{padding-bottom:max(100px,calc(88px + env(safe-area-inset-bottom, 0px)))!important;}
+  }
 `;
 
 // ── Starfield ─────────────────────────────────────────────────────────────────
@@ -675,36 +690,144 @@ function GmToast({msg}){
 // ── Appearance (theme + text size) ───────────────────────────────────────────
 
 function AppearanceBar({theme,setTheme,textStep,setTextStep}){
+  const [sheet,setSheet]=useState(false);
+  const [isMobile,setIsMobile]=useState(()=>typeof window!=="undefined"&&window.matchMedia("(max-width:720px)").matches);
+
+  useEffect(()=>{
+    const mq=window.matchMedia("(max-width:720px)");
+    const fn=()=>{
+      setIsMobile(mq.matches);
+      if(!mq.matches)setSheet(false);
+    };
+    fn();
+    mq.addEventListener("change",fn);
+    return()=>mq.removeEventListener("change",fn);
+  },[]);
+
+  useEffect(()=>{
+    if(!sheet)return;
+    const onKey=e=>{if(e.key==="Escape")setSheet(false);};
+    window.addEventListener("keydown",onKey);
+    return()=>window.removeEventListener("keydown",onKey);
+  },[sheet]);
+
   const tab=(active,onClick,label)=><button type="button" className="mc-aside-btn" onClick={onClick} aria-pressed={active} style={{width:"100%",padding:"8px 6px",borderRadius:6,border:`1px solid ${active?"var(--mc-accent)":"var(--mc-border)"}`,background:active?"var(--mc-nav-on)":"transparent",color:active?"var(--mc-accent)":"var(--mc-muted)",fontFamily:"var(--mc-font-mono)",fontSize:9,fontWeight:700,letterSpacing:0.5,textAlign:"center"}}>{label}</button>;
-  return(
-    <aside className="mc-aside-dock" aria-label="Theme and text size" style={{
-      position:"fixed",
-      right:"max(8px, env(safe-area-inset-right, 0px))",
-      top:"50%",
-      zIndex:60,
-      width:84,
-      display:"flex",
-      flexDirection:"column",
-      gap:14,
-      padding:"14px 10px",
-      background:"var(--mc-panel)",
-      border:"1px solid var(--mc-border)",
-      borderRight:"none",
-      borderRadius:"12px 0 0 12px",
-      backdropFilter:"blur(10px)",
-      boxShadow:"-4px 0 24px rgba(0,0,0,0.25)",
-    }}>
+
+  const pickTheme=t=>{setTheme(t);ss(K.theme,t);};
+  const pickStep=i=>{setTextStep(i);ss(K.uiText,String(i));};
+
+  const panelInner=(
+    <>
       <div style={{display:"flex",flexDirection:"column",gap:6,alignItems:"stretch"}}>
         <span style={{fontFamily:"var(--mc-font-mono)",fontSize:8,color:"var(--mc-dim)",letterSpacing:1.8,textAlign:"center"}}>THEME</span>
-        {tab(theme==="space",()=>{setTheme("space");ss(K.theme,"space");},"Space")}
-        {tab(theme==="light",()=>{setTheme("light");ss(K.theme,"light");},"Light")}
-        {tab(theme==="terminal",()=>{setTheme("terminal");ss(K.theme,"terminal");},"Terminal")}
+        {tab(theme==="space",()=>pickTheme("space"),"Space")}
+        {tab(theme==="light",()=>pickTheme("light"),"Light")}
+        {tab(theme==="terminal",()=>pickTheme("terminal"),"Terminal")}
       </div>
       <div style={{height:1,background:"var(--mc-border)",opacity:0.85}} aria-hidden="true"/>
       <div style={{display:"flex",flexDirection:"column",gap:6,alignItems:"stretch"}}>
         <span style={{fontFamily:"var(--mc-font-mono)",fontSize:8,color:"var(--mc-dim)",letterSpacing:1.4,textAlign:"center"}}>TEXT SIZE</span>
-        {TEXT_STEPS.map((_,i)=>tab(textStep===i,()=>{setTextStep(i);ss(K.uiText,String(i));},["S","M","L","XL"][i]))}
+        {TEXT_STEPS.map((_,i)=>tab(textStep===i,()=>pickStep(i),["S","M","L","XL"][i]))}
       </div>
+    </>
+  );
+
+  const asideStyle={
+    position:"fixed",
+    right:"max(8px, env(safe-area-inset-right, 0px))",
+    top:"50%",
+    zIndex:60,
+    width:84,
+    display:"flex",
+    flexDirection:"column",
+    gap:14,
+    padding:"14px 10px",
+    background:"var(--mc-panel)",
+    border:"1px solid var(--mc-border)",
+    borderRight:"none",
+    borderRadius:"12px 0 0 12px",
+    backdropFilter:"blur(10px)",
+    boxShadow:"-4px 0 24px rgba(0,0,0,0.25)",
+  };
+
+  if(isMobile){
+    return(
+      <>
+        <button
+          type="button"
+          className="mc-appearance-fab cbtn"
+          onClick={()=>setSheet(true)}
+          aria-haspopup="dialog"
+          aria-expanded={sheet}
+          aria-label="Theme and text size"
+          style={{
+            position:"fixed",
+            bottom:"max(14px, env(safe-area-inset-bottom, 14px))",
+            right:"max(12px, env(safe-area-inset-right, 12px))",
+            zIndex:58,
+            width:50,
+            height:50,
+            borderRadius:14,
+            border:"1px solid var(--mc-border)",
+            background:"var(--mc-panel-95)",
+            color:"var(--mc-accent)",
+            fontFamily:"var(--mc-font-ui)",
+            fontWeight:800,
+            fontSize:15,
+            letterSpacing:0.5,
+            boxShadow:"0 8px 28px rgba(0,0,0,0.45)",
+            display:"flex",
+            alignItems:"center",
+            justifyContent:"center",
+            backdropFilter:"blur(8px)",
+          }}
+        >
+          Aa
+        </button>
+        {sheet&&(
+          <>
+            <div
+              role="presentation"
+              onClick={()=>setSheet(false)}
+              style={{position:"fixed",inset:0,zIndex:85,background:"rgba(0,0,0,0.55)",touchAction:"none"}}
+            />
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Theme and text size"
+              className="mc-appearance-sheet"
+              style={{
+                position:"fixed",
+                left:0,
+                right:0,
+                bottom:0,
+                zIndex:90,
+                maxHeight:"88dvh",
+                overflow:"auto",
+                borderTopLeftRadius:16,
+                borderTopRightRadius:16,
+                border:"1px solid var(--mc-border)",
+                background:"var(--mc-panel-95)",
+                padding:"14px 18px calc(18px + env(safe-area-inset-bottom, 0px))",
+                boxShadow:"0 -12px 48px rgba(0,0,0,0.5)",
+                backdropFilter:"blur(12px)",
+              }}
+            >
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+                <span style={{fontFamily:"var(--mc-font-mono)",fontSize:10,color:"var(--mc-muted)",letterSpacing:1.4}}>THEME · TEXT</span>
+                <button type="button" className="cbtn" onClick={()=>setSheet(false)} aria-label="Close appearance panel" style={{padding:"6px 10px",fontFamily:"var(--mc-font-ui)",fontSize:10,color:"var(--mc-dim)",border:"1px solid var(--mc-border-strong)",borderRadius:8,background:"transparent"}}>Close</button>
+              </div>
+              {panelInner}
+            </div>
+          </>
+        )}
+      </>
+    );
+  }
+
+  return(
+    <aside className="mc-aside-dock" aria-label="Theme and text size" style={asideStyle}>
+      {panelInner}
     </aside>
   );
 }
@@ -714,14 +837,14 @@ function AppearanceBar({theme,setTheme,textStep,setTextStep}){
 function Header({bank,gateOpen,done,gateMin,streak}){
   const h=Math.floor(bank/60),m=bank%60;
   return(
-    <header style={{maxWidth:680,margin:"0 auto",padding:"18px 16px 0"}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",paddingBottom:12,borderBottom:"1px solid var(--mc-border)"}}>
+    <header className="mc-header" style={{maxWidth:680,margin:"0 auto",padding:"18px 16px 0"}}>
+      <div className="mc-header-inner" style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",paddingBottom:12,borderBottom:"1px solid var(--mc-border)"}}>
         <div>
-          <div style={{fontWeight:800,fontSize:18,letterSpacing:4,color:"var(--mc-accent)",textShadow:"0 0 22px rgba(0,229,255,0.4)"}}><span aria-hidden="true">🚀 </span>MISSION CONTROL</div>
+          <div className="mc-header-title" style={{fontWeight:800,fontSize:18,letterSpacing:4,color:"var(--mc-accent)",textShadow:"0 0 22px rgba(0,229,255,0.4)"}}><span aria-hidden="true">🚀 </span>MISSION CONTROL</div>
           <div style={{fontFamily:"var(--mc-font-mono)",fontSize:9,color:"var(--mc-muted)",marginTop:3,letterSpacing:1.5}}>JULIAN // SUMMER 2026</div>
           {streak>1&&<div style={{marginTop:6,display:"inline-flex",alignItems:"center",gap:5,background:"var(--mc-streak-bg)",border:"1px solid var(--mc-streak-br)",borderRadius:20,padding:"2px 10px"}}><span style={{fontSize:10}} aria-hidden="true">🔥</span><span style={{fontFamily:"var(--mc-font-mono)",fontSize:9,color:"var(--mc-warn)",letterSpacing:1}}>{streak}-DAY STREAK</span></div>}
         </div>
-        <div style={{textAlign:"right"}}>
+        <div className="mc-header-bank" style={{textAlign:"right"}}>
           <div style={{fontFamily:"var(--mc-font-mono)",fontSize:9,color:"var(--mc-muted)",letterSpacing:1.5,marginBottom:2}}>TIME BANKED</div>
           <div style={{fontFamily:"var(--mc-font-mono)",fontSize:23,color:bank>0?(gateOpen?"var(--mc-success)":"var(--mc-warn)"):"var(--mc-time-empty)",textShadow:bank>0?"0 0 14px var(--mc-msg-sent-br)":"none",transition:"color 0.4s",letterSpacing:1}}>{h}h {String(m).padStart(2,"0")}m</div>
           <div style={{fontFamily:"var(--mc-font-mono)",fontSize:8,color:gateOpen?"var(--mc-success)":"var(--mc-dim)",letterSpacing:1.5,marginTop:2}}>{gateOpen?"✓ UNLOCKED":`${done}/${gateMin} TO UNLOCK`}</div>
@@ -736,7 +859,7 @@ function Header({bank,gateOpen,done,gateMin,streak}){
 
 function Nav({view,setView,unread}){
   return(
-    <nav aria-label="Main navigation" style={{display:"flex",maxWidth:680,margin:"0 auto",padding:"0 16px",gap:4,marginTop:12,marginBottom:16}}>
+    <nav className="mc-nav-bar" aria-label="Main navigation" style={{display:"flex",maxWidth:680,margin:"0 auto",padding:"0 16px",gap:4,marginTop:12,marginBottom:16}}>
       {[["board","🛸 MISSIONS"],["progress","📡 PROGRESS"],["bank","⏱ TIME"],["ops","⚙ OPS"]].map(([id,label])=>(
         <button key={id} className="mc-nav-tab" onClick={()=>setView(id)} aria-current={view===id?"page":undefined} style={{flex:1,padding:"9px 0",border:"none",borderRadius:7,fontFamily:"var(--mc-font-ui)",fontWeight:700,fontSize:9,letterSpacing:1.4,background:view===id?"var(--mc-nav-on)":"var(--mc-nav)",color:view===id?"var(--mc-accent)":"var(--mc-muted)",borderBottom:view===id?"2px solid var(--mc-accent)":"2px solid transparent",backdropFilter:"blur(4px)",position:"relative"}}>
           {label}
@@ -752,6 +875,8 @@ function Nav({view,setView,unread}){
 function MoodCheck({mood,onSaveMood,onClearMood}){
   const fid=useId().replace(/:/g,"");
   const filterBright=`mcWheelBright-${fid}`;
+  const wheelPanelId=`mc-mood-panel-${fid}`;
+  const wheelHelpId=`mc-mood-help-${fid}`;
   const [expanded,setExpanded]=useState(false);
   const [coreIx,setCoreIx]=useState(null);
   const [hint,setHint]=useState(null);
@@ -824,7 +949,7 @@ function MoodCheck({mood,onSaveMood,onClearMood}){
   return(
     <div style={{marginBottom:14}}>
       <div style={{display:"flex",alignItems:"stretch",gap:8}}>
-        <button type="button" className="cbtn" onClick={toggleHeader} disabled={!!hint} aria-expanded={expanded} style={{...rowBtn,flex:1,textAlign:"left"}}>
+        <button type="button" className="cbtn" onClick={toggleHeader} disabled={!!hint} aria-expanded={expanded} aria-controls={wheelPanelId} id={`mc-mood-trigger-${fid}`} style={{...rowBtn,flex:1,textAlign:"left"}}>
           {!mood&&<span style={{width:8,height:8,borderRadius:"50%",background:"var(--mc-accent)",opacity:0.35,flexShrink:0}} aria-hidden="true"/>}
           {mood&&<span style={{width:8,height:8,borderRadius:"50%",background:disp.color,flexShrink:0}} aria-hidden="true"/>}
           <span style={{flex:1,fontFamily:"var(--mc-font-mono)",fontSize:9,color:mood?"var(--mc-text)":"var(--mc-social-soft)",letterSpacing:1.2}}>
@@ -838,15 +963,17 @@ function MoodCheck({mood,onSaveMood,onClearMood}){
       </div>
 
       {expanded&&(
-        <div style={{background:"rgba(6,14,28,0.85)",border:"1px solid #0d1e36",borderRadius:12,padding:"12px 14px 14px",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)"}}>
-          <div style={{fontFamily:"var(--mc-font-mono)",fontSize:8,color:"#8ab0d0",letterSpacing:0.6,marginBottom:10,lineHeight:1.5}}>Optional — tap to log, tap again to collapse</div>
+        <div id={wheelPanelId} role="region" aria-labelledby={`mc-mood-trigger-${fid}`} style={{background:"rgba(6,14,28,0.92)",border:"1px solid #0d1e36",borderRadius:12,padding:"12px 14px 14px",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)"}}>
+          <p id={wheelHelpId} style={{fontFamily:"var(--mc-font-mono)",fontSize:8,color:"#c5d4e8",letterSpacing:0.6,marginBottom:10,lineHeight:1.55}}>
+            Optional — tap a colored band, then pick a calibration (wheel or list). Tab moves between core bands; variants are in the list. Tap the header to collapse.
+          </p>
 
           <div style={{display:"flex",flexDirection:"row",flexWrap:"wrap",alignItems:"flex-start",gap:14}}>
             <div style={{flex:"0 1 240px",maxWidth:"min(52%,288px)",minWidth:168}}>
-              <svg viewBox="0 0 300 300" role="img" aria-label="Emotion classification wheel" width="100%" height="auto" style={{display:"block",maxWidth:288,pointerEvents:hint?"none":"auto"}} preserveAspectRatio="xMidYMid meet">
+              <svg viewBox="0 0 300 300" role="img" aria-label="Emotion classification wheel" aria-describedby={wheelHelpId} width="100%" height="auto" style={{display:"block",maxWidth:288,pointerEvents:hint?"none":"auto"}} preserveAspectRatio="xMidYMid meet">
             <defs>
               <filter id={filterBright} x="-20%" y="-20%" width="140%" height="140%">
-                <feComponentTransfer><feFuncR type="linear" slope="1.3"/><feFuncG type="linear" slope="1.3"/><feFuncB type="linear" slope="1.3"/></feComponentTransfer>
+                <feComponentTransfer><feFuncR type="linear" slope="1.08"/><feFuncG type="linear" slope="1.08"/><feFuncB type="linear" slope="1.08"/></feComponentTransfer>
               </filter>
             </defs>
             {EMOTION_CORES.map((c,i)=>{
@@ -867,7 +994,7 @@ function MoodCheck({mood,onSaveMood,onClearMood}){
                     transform={sel?`translate(${CX} ${CY}) scale(1.04) translate(${-CX} ${-CY})`:undefined}
                     tabIndex={hint?-1:0}
                     role="button"
-                    aria-label={`Core band: ${c.label}`}
+                    aria-label={`${c.label}, core emotion. Opens calibration choices.`}
                     onClick={()=>{if(!hint)setCoreIx(i);}}
                     onKeyDown={e=>{if(hint)return;if(e.key==="Enter"||e.key===" "){e.preventDefault();setCoreIx(i);}}}
                   />
@@ -877,15 +1004,19 @@ function MoodCheck({mood,onSaveMood,onClearMood}){
                       <text
                         x={pt.x}
                         y={pt.y}
-                        fill="#e8f0ff"
-                        fontSize={10}
+                        fill="#f8fafc"
+                        stroke="#030712"
+                        strokeWidth={2.25}
+                        paintOrder="stroke fill"
+                        strokeLinejoin="round"
+                        fontSize={11}
                         fontFamily="Oxanium,system-ui,sans-serif"
                         fontWeight={700}
                         textAnchor="middle"
                         dominantBaseline="middle"
                         pointerEvents="none"
                         transform={`rotate(${pt.mid+90},${pt.x},${pt.y})`}
-                        opacity={dim?0.45:1}
+                        opacity={dim?0.5:1}
                       >
                         {c.label}
                       </text>
@@ -908,7 +1039,7 @@ function MoodCheck({mood,onSaveMood,onClearMood}){
                       stroke={STROKE}
                       strokeWidth={STW}
                       paintOrder="stroke fill"
-                      opacity={0.92}
+                      opacity={1}
                       style={{cursor:hint?"default":"pointer"}}
                       tabIndex={-1}
                       role="presentation"
@@ -924,13 +1055,13 @@ function MoodCheck({mood,onSaveMood,onClearMood}){
 
             <div style={{flex:"1 1 160px",minWidth:120,maxWidth:"100%",display:"flex",flexDirection:"column",gap:8,justifyContent:"flex-start",minHeight:192}}>
               {!hint&&coreIx===null&&(
-                <div style={{fontFamily:"var(--mc-font-mono)",fontSize:9,color:"#8ab0d0",lineHeight:1.5,paddingTop:4}}>
-                  ← Tap a band on the wheel to open calibrations.
+                <div style={{fontFamily:"var(--mc-font-mono)",fontSize:9,color:"#c5d4e8",lineHeight:1.55,paddingTop:4}}>
+                  ← Choose a core band on the wheel (or Tab to a band and press Enter), then pick a calibration below or on the outer ring.
                 </div>
               )}
               {!hint&&coreIx!==null&&(
                 <>
-                  <div style={{fontFamily:"var(--mc-font-mono)",fontSize:8,color:"#8ab0d0",letterSpacing:0.5,marginBottom:2}}>
+                  <div style={{fontFamily:"var(--mc-font-mono)",fontSize:8,color:"#c5d4e8",letterSpacing:0.5,marginBottom:2}}>
                     {EMOTION_CORES[coreIx].label.toUpperCase()} — pick one
                   </div>
                   <div style={{display:"flex",flexDirection:"column",gap:6}} role="group" aria-label={`${EMOTION_CORES[coreIx].label} calibrations`}>
@@ -945,8 +1076,8 @@ function MoodCheck({mood,onSaveMood,onClearMood}){
                           aria-label={`${cc.label}: ${v.label}`}
                           style={{
                             width:"100%",minHeight:40,boxSizing:"border-box",padding:"8px 10px",border:`1px solid ${STROKE}`,borderRadius:8,
-                            background:`color-mix(in srgb,${cc.color} 42%,#060e1c)`,
-                            color:"#e8f0ff",fontFamily:"Oxanium,system-ui,sans-serif",fontSize:9,fontWeight:700,
+                            background:`color-mix(in srgb,${cc.color} 52%,#050a12)`,
+                            color:"#f8fafc",fontFamily:"Oxanium,system-ui,sans-serif",fontSize:9,fontWeight:700,
                             letterSpacing:0.2,lineHeight:1.2,textAlign:"left",wordBreak:"break-word",
                           }}
                         >
@@ -961,14 +1092,14 @@ function MoodCheck({mood,onSaveMood,onClearMood}){
           </div>
 
           {hint&&(
-            <p className="mc-body-hint" style={{fontFamily:"var(--mc-font-mono)",fontSize:10,color:"#8ab0d0",fontStyle:"italic",textAlign:"center",marginTop:12,lineHeight:1.55,maxWidth:400,marginLeft:"auto",marginRight:"auto"}}>
+            <p className="mc-body-hint" role="status" style={{fontFamily:"var(--mc-font-mono)",fontSize:10,color:"#dbe6f2",fontStyle:"italic",textAlign:"center",marginTop:12,lineHeight:1.55,maxWidth:400,marginLeft:"auto",marginRight:"auto"}}>
               {hint}
             </p>
           )}
 
           {!hint&&(
             <div style={{textAlign:"center",marginTop:12}}>
-              <button type="button" className="cbtn" onClick={onSkip} style={{background:"transparent",border:"none",color:"#8ab0d0",fontFamily:"var(--mc-font-mono)",fontSize:9,textDecoration:"underline",cursor:"pointer",padding:4}}>skip</button>
+              <button type="button" className="cbtn" onClick={onSkip} style={{background:"transparent",border:"none",color:"#b8c9dc",fontFamily:"var(--mc-font-mono)",fontSize:9,textDecoration:"underline",cursor:"pointer",padding:4}}>skip</button>
             </div>
           )}
         </div>
